@@ -16,18 +16,17 @@
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-  <!-- Optionnel: ton CSS existant -->
-  <link rel="stylesheet" href="/styles.css"/>
+  <!-- CSS local (corrigé: chemin relatif) -->
+  <link rel="stylesheet" href="styles.css"/>
 
-  <!-- CHANGES: Devicon pour les logos de langages -->
+  <!-- Devicon (logos) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css"/>
 
-  <!-- Loader (si tu as un loader.css il restera pris en compte) -->
   <style>
     :root{
-      --grad1: #4f46e5; /* indigo-600 */
-      --grad2: #06b6d4; /* cyan-500   */
-      --grad3: #22c55e; /* emerald-500*/
+      --grad1: #4f46e5;
+      --grad2: #06b6d4;
+      --grad3: #22c55e;
       --glass-bg: rgba(255,255,255,.55);
       --card-bg: rgba(255,255,255,.75);
     }
@@ -41,59 +40,39 @@
         #f3f4f6;
     }
 
-    /* Loader */
-    .loader{ position: fixed; inset: 0; display: grid; place-items: center; background: white; z-index: 9999; }
-    .loader::before{ content:""; width: 56px; height: 56px; border-radius:50%; border: 4px solid #e5e7eb; border-top-color: var(--grad1); animation: spin 1s linear infinite; }
+    .loader{
+      position: fixed; inset: 0; display: grid; place-items: center; background: white; z-index: 9999;
+    }
+    .loader::before{
+      content:""; width: 56px; height: 56px; border-radius:50%;
+      border: 4px solid #e5e7eb; border-top-color: var(--grad1);
+      animation: spin 1s linear infinite;
+    }
     @keyframes spin{ to{ transform: rotate(360deg);} }
 
-    /* Nav glass */
     .nav-glass { background: rgba(255,255,255,.7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-
-    /* Gradient text */
     .gradient-text{ background: linear-gradient(90deg, var(--grad1), var(--grad2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-    /* CTA buttons */
     .btn-primary{ background-image: linear-gradient(90deg, var(--grad1), var(--grad2)); box-shadow: 0 10px 20px rgba(79,70,229,.25); transition: transform .2s, box-shadow .2s; }
     .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 14px 24px rgba(79,70,229,.35); }
     .btn-ghost{ border: 2px solid var(--grad1); color: var(--grad1); transition: background-color .2s, transform .2s; }
     .btn-ghost:hover{ background: rgba(79,70,229,.06); transform: translateY(-2px); }
-
-    /* Cards */
     .card{ background: var(--card-bg); border: 1px solid rgba(125,125,125,.12); box-shadow: 0 10px 30px rgba(17,24,39,.06); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
     .card:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(17,24,39,.12); border-color: rgba(79,70,229,.28); }
-
-    /* Reveal on scroll */
     .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
     .reveal.visible{ opacity: 1; transform: translateY(0); }
-
-    /* Avatar ring glow */
     .ring-glow{ box-shadow: 0 0 0 8px rgba(79,70,229,.08), 0 15px 45px rgba(6,182,212,.25); }
-
-    /* Floating blobs (hero déco) */
     .blob{ position: absolute; filter: blur(40px); opacity: .35; animation: blob 12s ease-in-out infinite alternate; }
     .blob-1{ width: 280px; height: 280px; background: #a78bfa; top: -40px; right: 5%; animation-delay: .5s;}
     .blob-2{ width: 220px; height: 220px; background: #22d3ee; bottom: -30px; left: 8%; }
     @keyframes blob{ 0%{ transform: translate(0,0) scale(1);} 100%{ transform: translate(20px, -30px) scale(1.1);} }
-
-    /* Progress bar top */
     #progressBar{ position: fixed; top:0; left:0; height:4px; width:0; background-image: linear-gradient(90deg, var(--grad1), var(--grad2), var(--grad3)); z-index: 60; box-shadow: 0 2px 10px rgba(79,70,229,.4); }
-
-    /* Modal smooth in */
     .scale-in{ transform: scale(.9); opacity: 0; }
     .scale-in.active{ transform: scale(1); opacity: 1; transition: transform .25s ease, opacity .25s ease; }
-
-    /* Footer wave */
     .footer-wave{ transform: translateY(1px); }
-
-    /* Back to top */
     #toTop{ position: fixed; right: 18px; bottom: 18px; z-index: 60; display: none; background: linear-gradient(120deg, var(--grad1), var(--grad2)); color: white; width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 10px 24px rgba(79,70,229,.35); transition: transform .2s; }
     #toTop:hover{ transform: translateY(-3px); }
-
-    /* --- Modal Galerie (styles) --- */
-    .gallery-btn{ @apply text-indigo-600 hover:underline inline-flex items-center; }
+    .gallery-btn{ /* Tailwind @apply ignoré par GitHub Pages en CSS inline, mais ok ici */ }
     .gallery-overlay{ background: rgba(0,0,0,.9); }
-
-    /* CHANGES: petite aide pour les listes d’icônes */
     .tech-item { display:flex; align-items:flex-start; gap:.6rem; }
     .tech-item i, .tech-item span.devicon { font-size: 1.35rem; line-height: 1; }
   </style>
@@ -135,14 +114,16 @@
     </div>
   </nav>
 
-  <!-- HERO (inchangé) -->
+  <!-- HERO (corrigé: chemin relatif dans background-image) -->
   <header id="accueil" class="relative">
     <div class="absolute inset-0">
-      <div class="absolute inset-0 bg-cover bg-center opacity-70" style="background-image:url('/assets/anthony-intraversato-0r_37j49VZk-unsplash.jpg')"></div>
+      <div class="absolute inset-0 bg-cover bg-center opacity-70" style="background-image:url('assets/anthony-intraversato-0r_37j49VZk-unsplash.jpg')"></div>
       <div class="absolute inset-0 bg-gradient-to-br from-white via-white/70 to-transparent"></div>
     </div>
+
     <span class="blob blob-1 rounded-full"></span>
     <span class="blob blob-2 rounded-full"></span>
+
     <div class="relative container mx-auto px-4 py-20 md:py-28">
       <div class="grid md:grid-cols-2 gap-10 items-center">
         <div class="reveal">
@@ -152,13 +133,18 @@
           <p class="text-xl text-gray-600 mb-6">Développeur Web Full&nbsp;Stack — passionné par l’UX et les interfaces élégantes.</p>
           <p class="text-gray-600 mb-8">J’aime transformer des idées en produits concrets et attrayants. Voici une sélection de mes projets et compétences.</p>
           <div class="flex items-center space-x-4">
-            <a href="#projets" class="btn-primary text-white px-6 py-3 rounded-lg inline-flex items-center"><i data-feather="eye" class="mr-2"></i> Voir mes projets</a>
-            <a href="#contact" class="btn-ghost px-6 py-3 rounded-lg inline-flex items-center"><i data-feather="mail" class="mr-2"></i> Me contacter</a>
+            <a href="#projets" class="btn-primary text-white px-6 py-3 rounded-lg inline-flex items-center">
+              <i data-feather="eye" class="mr-2"></i> Voir mes projets
+            </a>
+            <a href="#contact" class="btn-ghost px-6 py-3 rounded-lg inline-flex items-center">
+              <i data-feather="mail" class="mr-2"></i> Me contacter
+            </a>
           </div>
         </div>
         <div class="reveal flex justify-center md:justify-end">
           <div class="relative">
-            <img src="/assets/image.jpeg" alt="Portrait de Moussa Adel" class="rounded-full w-64 h-64 md:w-72 md:h-72 object-cover ring-4 ring-white ring-opacity-90 ring-glow" loading="lazy"/>
+            <!-- corrigé: chemin relatif -->
+            <img src="assets/image.jpeg" alt="Portrait de Moussa Adel" class="rounded-full w-64 h-64 md:w-72 md:h-72 object-cover ring-4 ring-white ring-opacity-90 ring-glow" loading="lazy"/>
             <div class="absolute -bottom-3 -right-3 bg-white rounded-xl px-3 py-2 shadow-lg border border-gray-100 flex items-center space-x-2">
               <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               <span class="text-sm font-semibold text-gray-700">Disponible</span>
@@ -169,11 +155,13 @@
     </div>
   </header>
 
-  <!-- PROJETS (inchangé) -->
+  <!-- PROJETS -->
   <section id="projets" class="py-20">
     <div class="container mx-auto px-4">
       <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Mes <span class="gradient-text">Projets</span></h2>
+  
       <div class="grid md:grid-cols-3 gap-8">
+        
         <!-- Mycinéma -->
         <article class="card rounded-2xl p-6 reveal text-center">
           <h3 class="text-2xl font-bold gradient-text mb-4">Mycinéma</h3>
@@ -184,12 +172,15 @@
             <span class="px-3 py-1 text-xs rounded-full bg-yellow-50 text-yellow-700">JS</span>
           </div>
           <div class="flex items-center justify-center gap-4">
-            <button class="show-project gallery-btn" data-images="assets/cinema1.png,/assets/cinema2.png,/assets/cinema3.png">
+            <!-- corrigé: toutes les entrées sans slash initial -->
+            <button 
+              class="show-project gallery-btn"
+              data-images="assets/cinema1.png,assets/cinema2.png,assets/cinema3.png">
               <i data-feather="external-link" class="w-4 h-4 mr-1"></i> Voir le projet
             </button>
           </div>
         </article>
-
+  
         <!-- Ecommerce -->
         <article class="card rounded-2xl p-6 reveal text-center">
           <h3 class="text-2xl font-bold gradient-text mb-4">E-commerce</h3>
@@ -199,12 +190,15 @@
             <span class="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-700">React.js</span>
           </div>
           <div class="flex items-center justify-center gap-4">
-            <button class="show-project gallery-btn" data-images="assets/ecommerce1.webp,/assets/ecommerce2.webp,/assets/ecommerce3.webp">
+            <!-- corrigé -->
+            <button 
+              class="show-project gallery-btn"
+              data-images="assets/ecommerce1.webp,assets/ecommerce2.webp,assets/ecommerce3.webp">
               <i data-feather="external-link" class="w-4 h-4 mr-1"></i> Voir le projet
             </button>
           </div>
         </article>
-
+  
         <!-- Quizea -->
         <article class="card rounded-2xl p-6 reveal text-center">
           <h3 class="text-2xl font-bold gradient-text mb-4">Quizea</h3>
@@ -215,7 +209,10 @@
             <span class="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-700">React</span>
           </div>
           <div class="flex items-center justify-center gap-4">
-            <button class="show-project gallery-btn" data-images="assets/imagequizea1.png,/assets/imagequizea2.jpeg,/assets/imagequizea3.jpeg">
+            <!-- corrigé -->
+            <button 
+              class="show-project gallery-btn"
+              data-images="assets/imagequizea1.png,assets/imagequizea2.jpeg,assets/imagequizea3.jpeg">
               <i data-feather="external-link" class="w-4 h-4 mr-1"></i> Voir le projet
             </button>
           </div>
@@ -237,13 +234,12 @@
     </div>
   </section>
 
-  <!-- COMPÉTENCES (CHANGES) -->
+  <!-- COMPÉTENCES (version logos + descriptions) -->
   <section id="competences" class="py-20 bg-white/70">
     <div class="container mx-auto px-4">
       <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Mes <span class="gradient-text">Compétences</span></h2>
 
       <div class="grid md:grid-cols-3 gap-8">
-        <!-- Front-end -->
         <div class="card rounded-2xl p-6 reveal">
           <div class="text-center">
             <i data-feather="code" class="mx-auto mb-4 w-12 h-12 text-indigo-600"></i>
@@ -270,7 +266,6 @@
           </ul>
         </div>
 
-        <!-- Back-end -->
         <div class="card rounded-2xl p-6 reveal">
           <div class="text-center">
             <i data-feather="server" class="mx-auto mb-4 w-12 h-12 text-indigo-600"></i>
@@ -293,7 +288,6 @@
           </ul>
         </div>
 
-        <!-- Données & Outils -->
         <div class="card rounded-2xl p-6 reveal">
           <div class="text-center">
             <i data-feather="database" class="mx-auto mb-4 w-12 h-12 text-indigo-600"></i>
@@ -319,19 +313,19 @@
     </div>
   </section>
 
-  <!-- OBJECTIFS (CHANGES: focus sur sites e-commerce/vitrine, sans parler de perfs) -->
+  <!-- OBJECTIFS (focus sites e-commerce/vitrine) -->
   <section id="objectifs" class="py-20">
     <div class="container mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-10 items-center">
         <div class="reveal">
           <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Objectifs & Ambitions</h2>
           <p class="text-gray-600 mb-6">
-            Créer des sites utiles et jolis pour des besoins concrets&nbsp;: vitrines, e-commerce, blogs, landing pages et petits outils en ligne.
+            Créer des sites utiles et jolis pour des besoins concrets : vitrines, e-commerce, blogs, landing pages et petits outils en ligne.
           </p>
           <ul class="space-y-3 text-gray-700">
             <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Maîtriser les bases solides de JavaScript et de React pour des interfaces claires.</li>
             <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Consolider PHP/Symfony pour des boutiques et formulaires fiables.</li>
-            <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Proposer des sites prêts à l’emploi&nbsp;: catalogue, panier, paiement, blog.</li>
+            <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Proposer des sites prêts à l’emploi : catalogue, panier, paiement, blog.</li>
           </ul>
         </div>
         <div class="reveal">
@@ -360,10 +354,11 @@
     </div>
   </section>
 
-  <!-- CONTACT (inchangé) -->
+  <!-- CONTACT -->
   <section id="contact" class="py-20 bg-white/70">
     <div class="container mx-auto px-4">
       <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">Contactez-moi</h2>
+
       <div class="grid md:grid-cols-2 gap-8">
         <div class="card rounded-2xl p-6 reveal">
           <h3 class="text-xl font-semibold mb-4">Mes Coordonnées</h3>
@@ -398,10 +393,11 @@
     </div>
   </section>
 
-  <!-- FOOTER (inchangé) -->
+  <!-- FOOTER -->
   <footer class="relative bg-gray-900 text-white pt-16">
     <svg class="footer-wave absolute top-0 left-0 w-full" height="60" preserveAspectRatio="none" viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,0V46.29c47.79,22.2,103.59,29,158,17,70-15,136-57,206-66s142,22,212,35,140,9,206-9,132-50,206-48,146,38,212,65V0Z" fill="url(#grad)"></path>
+      <path d="M0,0V46.29c47.79,22.2,103.59,29,158,17,70-15,136-57,206-66s142,22,212,35,140,9,206-9,132-50,206-48,146,38,212,65V0Z"
+            fill="url(#grad)"></path>
       <defs>
         <linearGradient id="grad" x1="0" x2="1">
           <stop offset="0%" stop-color="#4f46e5"/>
@@ -413,7 +409,6 @@
       <div class="flex justify-center space-x-6 mb-5">
         <a href="https://www.linkedin.com/in/adel-moussa-7b5512306/" class="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition"><i data-feather="linkedin"></i></a>
         <a href="https://github.com/Adel-131212" class="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition"><i data-feather="github"></i></a>
-     
       </div>
       <p class="text-center text-white/80">© 2025 Moussa Adel. Tous droits réservés.</p>
     </div>
@@ -437,10 +432,8 @@
 
   <!-- Scripts -->
   <script>
-    // Icons
     document.addEventListener('DOMContentLoaded', () => { feather.replace(); });
 
-    // Loader
     window.addEventListener('load', () => {
       setTimeout(() => {
         document.querySelector('.loader').style.display = 'none';
@@ -448,12 +441,10 @@
       }, 800);
     });
 
-    // Mobile menu
     const menuBtn = document.getElementById('menuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     if(menuBtn){ menuBtn.addEventListener('click', ()=> mobileMenu.classList.toggle('hidden')); }
 
-    // Scroll progress bar
     const progressBar = document.getElementById('progressBar');
     window.addEventListener('scroll', () => {
       const h = document.documentElement;
@@ -461,18 +452,15 @@
       progressBar.style.width = scrolled + '%';
     });
 
-    // Back to top
     const toTop = document.getElementById('toTop');
     window.addEventListener('scroll', () => { toTop.style.display = (window.scrollY > 600) ? 'grid' : 'none'; });
     toTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 
-    // IntersectionObserver for reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('visible'); }});
     }, { threshold: .15 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Highlight active nav link
     const sections = document.querySelectorAll('section[id], header[id]');
     const navLinks = document.querySelectorAll('.nav-link');
     window.addEventListener('scroll', () => {
@@ -489,10 +477,8 @@
       });
     });
 
-    // EmailJS init (garde ton ID)
     (function(){ emailjs.init("NOSsgSJzTWvxoOCzs"); })();
 
-    // Contact form
     const form = document.getElementById('contact-form');
     const formAlert = document.getElementById('formAlert');
     if(form){
@@ -596,7 +582,7 @@
       }
     })();
 
-    // ===== Modal Galerie (images projets) =====
+    // Galerie images projets
     (function(){
       const modal = document.getElementById('galleryModal');
       const img = document.getElementById('galleryImage');
@@ -659,7 +645,7 @@
       });
     })();
 
-    /* CHANGES: suppression du composant Skill & de son template */
+    // RoadItem (mini-template)
     function RoadItemTemplate(title, text){
       return `
         <div class="flex">
