@@ -1,0 +1,50 @@
+:root {
+    --color-background: #eaecfa;
+    --color-loader: #3c4cdf;
+  }
+  
+  body {
+    background: var(--color-background);
+  }
+  
+  .loader {
+    width: 500px;          /* Augmenté de 250px à 400px */
+    height: 110px;          /* Augmenté de 50px à 80px */
+    line-height: 90px;     /* Ajusté pour correspondre à la nouvelle hauteur */
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: helvetica, arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: var(--color-loader);
+    letter-spacing: 0.2em;
+    font-size: 30px;       /* Ajout d'une taille de police plus grande */
+  }
+  
+  .loader::before,
+  .loader::after {
+    content: "";
+    display: block;
+    width: 25px;           /* Augmenté de 15px à 25px */
+    height: 25px;          /* Augmenté de 15px à 25px */
+    background: var(--color-loader);
+    position: absolute;
+    animation: load .9s infinite alternate ease-in-out;
+  }
+  
+  .loader::before {
+    top: 0;
+  }
+  
+  .loader::after {
+    bottom: 0;
+  }
+  
+  @keyframes load {
+    0% { left: 0; height: 50px; width: 25px }       /* Hauteur augmentée à 50px, largeur à 25px */
+    50% { height: 12px; width: 60px }               /* Hauteur augmentée à 12px, largeur à 60px */
+    100% { left: 375px; height: 50px; width: 25px } /* Point final ajusté à 375px (400px - 25px) */
+  }

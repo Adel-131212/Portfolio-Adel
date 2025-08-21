@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moussa Adel — Portfolio</title>
+
+  <!-- Tailwind (v2.2 CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Icons & EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <!-- Optionnel: ton CSS existant -->
+  <link rel="stylesheet" href="/styles.css"/>
+
+  <!-- Loader (si tu as un loader.css il restera pris en compte) -->
+  <style>
+    :root{
+      --grad1: #4f46e5; /* indigo-600 */
+      --grad2: #06b6d4; /* cyan-500   */
+      --grad3: #22c55e; /* emerald-500*/
+      --glass-bg: rgba(255,255,255,.55);
+      --card-bg: rgba(255,255,255,.75);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(79,70,229,.15), transparent 60%),
+        radial-gradient(1000px 500px at 110% 10%, rgba(6,182,212,.15), transparent 60%),
+        #f3f4f6;
+    }
+
+    /* Loader */
+    .loader{
+      position: fixed; inset: 0;
+      display: grid; place-items: center;
+      background: white; z-index: 9999;
+    }
+    .loader::before{
+      content:""; width: 56px; height: 56px; border-radius:50%;
+      border: 4px solid #e5e7eb; border-top-color: var(--grad1);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg);} }
+
+    /* Nav glass */
+    .nav-glass {
+      background: rgba(255,255,255,.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Gradient text */
+    .gradient-text{
+      background: linear-gradient(90deg, var(--grad1), var(--grad2));
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+
+    /* CTA buttons */
+    .btn-primary{
+      background-image: linear-gradient(90deg, var(--grad1), var(--grad2));
+      box-shadow: 0 10px 20px rgba(79,70,229,.25);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 14px 24px rgba(79,70,229,.35); }
+    .btn-ghost{
+      border: 2px solid var(--grad1); color: var(--grad1);
+      transition: background-color .2s, transform .2s;
+    }
+    .btn-ghost:hover{ background: rgba(79,70,229,.06); transform: translateY(-2px); }
+
+    /* Cards */
+    .card{
+      background: var(--card-bg);
+      border: 1px solid rgba(125,125,125,.12);
+      box-shadow: 0 10px 30px rgba(17,24,39,.06);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+    .card:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(17,24,39,.12);
+      border-color: rgba(79,70,229,.28);
+    }
+
+    /* Reveal on scroll */
+    .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible{ opacity: 1; transform: translateY(0); }
+
+    /* Avatar ring glow */
+    .ring-glow{
+      box-shadow:
+        0 0 0 8px rgba(79,70,229,.08),
+        0 15px 45px rgba(6,182,212,.25);
+    }
+
+    /* Floating blobs (hero déco) */
+    .blob{
+      position: absolute; filter: blur(40px); opacity: .35;
+      animation: blob 12s ease-in-out infinite alternate;
+    }
+    .blob-1{ width: 280px; height: 280px; background: #a78bfa; top: -40px; right: 5%; animation-delay: .5s;}
+    .blob-2{ width: 220px; height: 220px; background: #22d3ee; bottom: -30px; left: 8%; }
+    @keyframes blob{
+      0%{ transform: translate(0,0) scale(1);}
+      100%{ transform: translate(20px, -30px) scale(1.1);}
+    }
+
+    /* Progress bar top */
+    #progressBar{
+      position: fixed; top:0; left:0; height:4px; width:0;
+      background-image: linear-gradient(90deg, var(--grad1), var(--grad2), var(--grad3));
+      z-index: 60;
+      box-shadow: 0 2px 10px rgba(79,70,229,.4);
+    }
+
+    /* Modal smooth in */
+    .scale-in{ transform: scale(.9); opacity: 0; }
+    .scale-in.active{ transform: scale(1); opacity: 1; transition: transform .25s ease, opacity .25s ease; }
+
+    /* Footer wave */
+    .footer-wave{ transform: translateY(1px); }
+
+    /* Back to top */
+    #toTop{
+      position: fixed; right: 18px; bottom: 18px; z-index: 60; display: none;
+      background: linear-gradient(120deg, var(--grad1), var(--grad2));
+      color: white; width: 44px; height: 44px; border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(79,70,229,.35);
+      transition: transform .2s;
+    }
+    #toTop:hover{ transform: translateY(-3px); }
+
+    /* --- Modal Galerie (styles) --- */
+    .gallery-btn{
+      @apply text-indigo-600 hover:underline inline-flex items-center;
+    }
+    .gallery-overlay{
+      background: rgba(0,0,0,.9);
+    }
+  </style>
+</head>
+
+<body class="leading-normal tracking-normal text-gray-800">
+  <!-- Progress bar -->
+  <div id="progressBar"></div>
+
+  <!-- Loader -->
+  <div class="loader" aria-label="Chargement..."></div>
+
+  <!-- NAV -->
+  <nav class="nav-glass sticky top-0 z-50 border-b border-gray-200">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="#accueil" class="flex items-center space-x-2">
+        <span class="text-2xl font-bold gradient-text">Moussa&nbsp;Adel</span>
+      </a>
+      <div class="hidden md:flex items-center space-x-6 font-medium">
+        <a href="#accueil" class="nav-link text-gray-700 hover:text-gray-900">Accueil</a>
+        <a href="#projets" class="nav-link text-gray-700 hover:text-gray-900">Projets</a>
+        <a href="#competences" class="nav-link text-gray-700 hover:text-gray-900">Compétences</a>
+        <a href="#contact" class="nav-link text-gray-700 hover:text-gray-900">Contact</a>
+        <a href="#CV" class="nav-link text-gray-700 hover:text-gray-900">CV</a>
+      </div>
+      <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-gray-200 hover:bg-gray-50">
+        <i data-feather="menu"></i>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white/80 backdrop-filter backdrop-blur">
+      <div class="px-4 py-3 space-y-2">
+        <a href="#accueil" class="block py-2">Accueil</a>
+        <a href="#projets" class="block py-2">Projets</a>
+        <a href="#competences" class="block py-2">Compétences</a>
+        <a href="#contact" class="block py-2">Contact</a>
+        <a href="#CV" class="block py-2">CV</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="accueil" class="relative">
+    <div class="absolute inset-0">
+      <!-- Image de fond + voile -->
+      <div class="absolute inset-0 bg-cover bg-center opacity-70" style="background-image:url('/assets/anthony-intraversato-0r_37j49VZk-unsplash.jpg')"></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-white via-white/70 to-transparent"></div>
+    </div>
+
+    <!-- Blobs décoratifs -->
+    <span class="blob blob-1 rounded-full"></span>
+    <span class="blob blob-2 rounded-full"></span>
+
+    <div class="relative container mx-auto px-4 py-20 md:py-28">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="reveal">
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+            Bonjour, je suis <span class="gradient-text">Moussa Adel</span>
+          </h1>
+          <p class="text-xl text-gray-600 mb-6">
+            Développeur Web Full&nbsp;Stack — passionné par l’UX, les interfaces élégantes et les perfs.
+          </p>
+          <p class="text-gray-600 mb-8">
+            J’aime transformer des idées en produits concrets, rapides et attrayants. Voici une sélection de mes projets et compétences.
+          </p>
+          <div class="flex items-center space-x-4">
+            <a href="#projets" class="btn-primary text-white px-6 py-3 rounded-lg inline-flex items-center">
+              <i data-feather="eye" class="mr-2"></i> Voir mes projets
+            </a>
+            <a href="#contact" class="btn-ghost px-6 py-3 rounded-lg inline-flex items-center">
+              <i data-feather="mail" class="mr-2"></i> Me contacter
+            </a>
+          </div>
+        </div>
+        <div class="reveal flex justify-center md:justify-end">
+          <div class="relative">
+            <img src="/assets/image.jpeg" alt="Portrait de Moussa Adel" class="rounded-full w-64 h-64 md:w-72 md:h-72 object-cover ring-4 ring-white ring-opacity-90 ring-glow" loading="lazy"/>
+            <div class="absolute -bottom-3 -right-3 bg-white rounded-xl px-3 py-2 shadow-lg border border-gray-100 flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              <span class="text-sm font-semibold text-gray-700">Disponible</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROJETS -->
+  <section id="projets" class="py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+        Mes <span class="gradient-text">Projets</span>
+      </h2>
+  
+      <div class="grid md:grid-cols-3 gap-8">
+        
+        <!-- Mycinéma -->
+        <article class="card rounded-2xl p-6 reveal text-center">
+          <h3 class="text-2xl font-bold gradient-text mb-4">Mycinéma</h3>
+          <p class="text-gray-600 mb-4">Espace d’administration complet pour un cinéma (films, séances, réservations).</p>
+          <div class="flex flex-wrap gap-2 justify-center mb-4">
+            <span class="px-3 py-1 text-xs rounded-full bg-indigo-50 text-indigo-700">PHP</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-700">MySQL</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-yellow-50 text-yellow-700">JS</span>
+          </div>
+          <div class="flex items-center justify-center gap-4">
+            <button 
+              class="show-project gallery-btn"
+              data-images="assets/cinema1.png,/assets/cinema2.png,/assets/cinema3.png">
+              <i data-feather="external-link" class="w-4 h-4 mr-1"></i> Voir le projet
+            </button>
+            <button data-languages="PHP, MySQL, HTML, CSS, JavaScript" class="show-languages text-sm font-medium text-white px-3 py-2 rounded-lg btn-primary">Stack</button>
+          </div>
+        </article>
+  
+        <!-- Ecommerce -->
+        <article class="card rounded-2xl p-6 reveal text-center">
+          <h3 class="text-2xl font-bold gradient-text mb-4">E-commerce</h3>
+          <p class="text-gray-600 mb-4">Boutique en ligne de composants informatiques avec catalogue interactif, panier et commandes sécurisées.</p>
+          <div class="flex flex-wrap gap-2 justify-center mb-4">
+            <span class="px-3 py-1 text-xs rounded-full bg-red-50 text-red-700">Symfony (PHP)</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-700">React.js</span>
+          </div>
+          <div class="flex items-center justify-center gap-4">
+            <button 
+              class="show-project gallery-btn"
+              data-images="assets/ecommerce1.webp,/assets/ecommerce2.webp,/assets/ecommerce3.webp">
+              <i data-feather="external-link" class="w-4 h-4 mr-1"></i> Voir le projet
+            </button>
+            <button data-languages="Symfony, React.js, MySQL" class="show-languages text-sm font-medium text-white px-3 py-2 rounded-lg btn-primary">Stack</button>
+          </div>
+        </article>
+  
+        <!-- Quizea -->
+        <article class="card rounded-2xl p-6 reveal text-center">
+          <h3 class="text-2xl font-bold gradient-text mb-4">Quizea</h3>
+          <p class="text-gray-600 mb-4">Application de quiz interactive avec scores, classements et gestion des questions.</p>
+          <div class="flex flex-wrap gap-2 justify-center mb-4">
+            <span class="px-3 py-1 text-xs rounded-full bg-green-50 text-green-700">Node.js</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700">Express</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-700">React</span>
+          </div>
+          <div class="flex items-center justify-center gap-4">
+            <button 
+              class="show-project gallery-btn"
+              data-images="assets/imagequizea1.png,/assets/imagequizea2.jpeg,/assets/imagequizea3.jpeg">
+              <i data-feather="external-link" class="w-4 h-4 mr-1"></i> Voir le projet
+            </button>
+            <button data-languages="Node.js, Express, React, MongoDB" class="show-languages text-sm font-medium text-white px-3 py-2 rounded-lg btn-primary">Stack</button>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Modal Langages -->
+    <div id="languagesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div id="modalContent" class="bg-white rounded-2xl p-6 w-full max-w-md mx-4 scale-in">
+        <div class="flex items-center justify-between mb-3">
+          <h4 id="modalTitle" class="text-xl font-bold">Stack</h4>
+          <button id="closeModal" class="p-2 rounded-lg hover:bg-gray-100" aria-label="Fermer la modal stack">
+            <i data-feather="x"></i>
+          </button>
+        </div>
+        <div id="languagesList" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPÉTENCES -->
+  <section id="competences" class="py-20 bg-white/70">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Mes <span class="gradient-text">Compétences</span></h2>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card rounded-2xl p-6 reveal text-center">
+          <i data-feather="code" class="mx-auto mb-4 w-12 h-12 text-indigo-600"></i>
+          <h3 class="text-xl font-semibold mb-2">Front-end</h3>
+          <p class="text-gray-600 mb-5">HTML, CSS (Tailwind), JavaScript, React</p>
+          <div class="space-y-3 text-left">
+            <Skill label="HTML/CSS" value="90"></Skill>
+            <Skill label="JavaScript" value="80"></Skill>
+            <Skill label="React" value="70"></Skill>
+          </div>
+        </div>
+
+        <div class="card rounded-2xl p-6 reveal text-center">
+          <i data-feather="server" class="mx-auto mb-4 w-12 h-12 text-indigo-600"></i>
+          <h3 class="text-xl font-semibold mb-2">Back-end</h3>
+          <p class="text-gray-600 mb-5">PHP/Laravel, Node/Express</p>
+          <div class="space-y-3 text-left">
+            <Skill label="PHP" value="75"></Skill>
+            <Skill label="Node.js" value="70"></Skill>
+            <Skill label="API REST" value="80"></Skill>
+          </div>
+        </div>
+
+        <div class="card rounded-2xl p-6 reveal text-center">
+          <i data-feather="database" class="mx-auto mb-4 w-12 h-12 text-indigo-600"></i>
+          <h3 class="text-xl font-semibold mb-2">Données & Outils</h3>
+          <p class="text-gray-600 mb-5">MySQL, Git/GitHub, SEO de base</p>
+          <div class="space-y-3 text-left">
+            <Skill label="MySQL" value="75"></Skill>
+            <Skill label="Git/GitHub" value="85"></Skill>
+            <Skill label="SEO" value="65"></Skill>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBJECTIFS -->
+  <section id="objectifs" class="py-20">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="reveal">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Objectifs & Ambitions</h2>
+          <p class="text-gray-600 mb-6">
+            Devenir un développeur Full&nbsp;Stack complet en maîtrisant les stacks modernes, l’accessibilité, et l’optimisation perfs.
+          </p>
+          <ul class="space-y-3 text-gray-700">
+            <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Approfondir JavaScript (patterns, tests, perfs)</li>
+            <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Consolider React (hooks avancés, état, tooling)</li>
+            <li class="flex items-start"><i data-feather="check-circle" class="text-emerald-500 mr-2"></i> Mener des projets avec une UX élégante et rapide</li>
+          </ul>
+        </div>
+        <div class="reveal">
+          <div class="card rounded-2xl p-6">
+            <h3 class="text-xl font-semibold mb-4">Feuille de route</h3>
+            <div class="space-y-4">
+              <RoadItem title="Court terme" text="Renforcer l’expertise JS/React, bonnes pratiques & perfs."/>
+              <RoadItem title="Moyen terme" text="Produire des interfaces premium (design systems, animations)."/>
+              <RoadItem title="Long terme" text="Lead technique front et mentoring de l’équipe."/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CV -->
+  <section id="CV" class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-tr from-indigo-50 via-white to-cyan-50"></div>
+    <div class="relative container mx-auto px-4 py-20 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Mon CV</h2>
+      <p class="text-gray-600 mb-8">Téléchargez mon CV détaillé.</p>
+      <a href="assets/Cv-Adel-At.pdf" download class="btn-primary text-white px-7 py-3 rounded-xl inline-flex items-center">
+        <i data-feather="download" class="mr-2"></i> Télécharger mon CV
+      </a>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-20 bg-white/70">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">Contactez-moi</h2>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="card rounded-2xl p-6 reveal">
+          <h3 class="text-xl font-semibold mb-4">Mes Coordonnées</h3>
+          <ul class="space-y-3 text-gray-700">
+            <li class="flex items-center"><i data-feather="mail" class="mr-2 text-indigo-600"></i> adel.moussa@epitech.eu</li>
+            <li class="flex items-center"><i data-feather="phone" class="mr-2 text-indigo-600"></i> +33 7 67 39 80 38</li>
+            <li class="flex items-center"><i data-feather="linkedin" class="mr-2 text-indigo-600"></i>
+              <a href="https://www.linkedin.com/in/adel-moussa-7b5512306/" class="text-indigo-600 hover:underline">LinkedIn</a>
+            </li>
+            <li class="flex items-center"><i data-feather="github" class="mr-2 text-indigo-600"></i>
+              <a href="https://github.com/Adel-131212" class="text-indigo-600 hover:underline">GitHub</a>
+            </li>
+          </ul>
+        </div>
+
+        <form id="contact-form" class="card rounded-2xl p-6 reveal">
+          <div id="formAlert" class="hidden mb-4 px-4 py-3 rounded-lg border text-sm"></div>
+          <div class="mb-4">
+            <input type="text" id="nom" name="nom" placeholder="Votre nom" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required/>
+          </div>
+          <div class="mb-4">
+            <input type="email" id="email" name="email" placeholder="Votre email" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required/>
+          </div>
+          <div class="mb-6">
+            <textarea id="message" name="message" placeholder="Votre message" rows="5" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg inline-flex items-center justify-center">
+            <i data-feather="send" class="mr-2"></i> Envoyer
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="relative bg-gray-900 text-white pt-16">
+    <svg class="footer-wave absolute top-0 left-0 w-full" height="60" preserveAspectRatio="none" viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0V46.29c47.79,22.2,103.59,29,158,17,70-15,136-57,206-66s142,22,212,35,140,9,206-9,132-50,206-48,146,38,212,65V0Z"
+            fill="url(#grad)"></path>
+      <defs>
+        <linearGradient id="grad" x1="0" x2="1">
+          <stop offset="0%" stop-color="#4f46e5"/>
+          <stop offset="100%" stop-color="#06b6d4"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="relative container mx-auto px-4 pb-10">
+      <div class="flex justify-center space-x-6 mb-5">
+        <a href="https://www.linkedin.com/in/adel-moussa-7b5512306/" class="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition"><i data-feather="linkedin"></i></a>
+        <a href="https://github.com/Adel-131212" class="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition"><i data-feather="github"></i></a>
+        <a href="#" class="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition"><i data-feather="twitter"></i></a>
+      </div>
+      <p class="text-center text-white/80">© 2025 Moussa Adel. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="toTop" aria-label="Retour en haut" class="flex items-center justify-center">
+    <i data-feather="arrow-up"></i>
+  </button>
+
+  <!-- ===== Modal Galerie (plein écran) ===== -->
+  <div id="galleryModal" class="fixed inset-0 gallery-overlay hidden z-50">
+    <div class="w-full h-full flex items-center justify-center relative">
+      <button id="closeGallery" class="absolute top-5 right-5 text-white text-3xl leading-none p-2 rounded-lg hover:bg-white/10" aria-label="Fermer la galerie">&times;</button>
+
+      <button id="prevImage" class="absolute left-3 md:left-6 text-white text-4xl leading-none p-2 rounded-lg hover:bg-white/10" aria-label="Image précédente">&#10094;</button>
+
+      <img id="galleryImage" src="" alt="Image du projet" class="max-h-[82vh] max-w-[90vw] rounded-xl shadow-2xl select-none" draggable="false"/>
+
+      <button id="nextImage" class="absolute right-3 md:right-6 text-white text-4xl leading-none p-2 rounded-lg hover:bg-white/10" aria-label="Image suivante">&#10095;</button>
+
+      <!-- Compteur -->
+      <div id="galleryCounter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/90 text-sm px-3 py-1 rounded-full bg-white/10 backdrop-blur border border-white/20"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Icons
+    document.addEventListener('DOMContentLoaded', () => { feather.replace(); });
+
+    // Loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelector('.loader').style.display = 'none';
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      }, 800);
+    });
+
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if(menuBtn){
+      menuBtn.addEventListener('click', ()=> mobileMenu.classList.toggle('hidden'));
+    }
+
+    // Scroll progress bar
+    const progressBar = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      progressBar.style.width = scrolled + '%';
+    });
+
+    // Back to top
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+      toTop.style.display = (window.scrollY > 600) ? 'grid' : 'none';
+    });
+    toTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+    // IntersectionObserver for reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('visible'); }});
+    }, { threshold: .15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Highlight active nav link
+    const sections = document.querySelectorAll('section[id], header[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (pageYOffset >= top) current = sec.getAttribute('id');
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('text-gray-900','font-semibold');
+        if(link.getAttribute('href') === '#' + current){
+          link.classList.add('text-gray-900','font-semibold');
+        }
+      });
+    });
+
+    // EmailJS init (garde ton ID)
+    (function(){ emailjs.init("NOSsgSJzTWvxoOCzs"); })();
+
+    // Contact form
+    const form = document.getElementById('contact-form');
+    const formAlert = document.getElementById('formAlert');
+    if(form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="animate-pulse">Envoi…</span>';
+        submitBtn.disabled = true;
+
+        const nom = document.getElementById("nom").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if(!nom || !email || !message){
+          showAlert('Tous les champs sont requis.', 'error');
+          submitBtn.disabled = false; submitBtn.innerHTML = originalText;
+          return;
+        }
+        if(!/\S+@\S+\.\S+/.test(email)){
+          showAlert('Veuillez entrer un email valide.', 'error');
+          submitBtn.disabled = false; submitBtn.innerHTML = originalText;
+          return;
+        }
+
+        emailjs.send("service_niwisry", "template_l9px6dw", { nom, email, message })
+          .then(() => {
+            showAlert('Message envoyé avec succès !', 'success');
+            form.reset();
+          })
+          .catch((error) => {
+            console.error(error);
+            showAlert("Erreur lors de l'envoi. Veuillez réessayer.", 'error');
+          })
+          .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          });
+      });
+    }
+    function showAlert(text, type){
+      formAlert.classList.remove('hidden');
+      formAlert.textContent = text;
+      if(type==='success'){
+        formAlert.className = 'mb-4 px-4 py-3 rounded-lg border text-sm bg-emerald-50 border-emerald-200 text-emerald-700';
+      }else{
+        formAlert.className = 'mb-4 px-4 py-3 rounded-lg border text-sm bg-rose-50 border-rose-200 text-rose-700';
+      }
+      setTimeout(()=> formAlert.classList.add('hidden'), 4000);
+    }
+
+    // Modal Langages
+    (function(){
+      const modal = document.getElementById('languagesModal');
+      const modalContent = document.getElementById('modalContent');
+      const languagesList = document.getElementById('languagesList');
+      const closeModal = document.getElementById('closeModal');
+      const showButtons = document.querySelectorAll('.show-languages');
+      const modalTitle = document.getElementById('modalTitle');
+
+      const colors = {
+        'PHP':'bg-indigo-100 text-indigo-800',
+        'MySQL':'bg-blue-100 text-blue-800',
+        'HTML':'bg-red-100 text-red-800',
+        'CSS':'bg-pink-100 text-pink-800',
+        'JavaScript':'bg-yellow-100 text-yellow-800',
+        'Laravel':'bg-red-100 text-red-800',
+        'Node.js':'bg-green-100 text-green-800',
+        'Express':'bg-gray-100 text-gray-800',
+        'MongoDB':'bg-green-100 text-green-800',
+        'React':'bg-blue-100 text-blue-800',
+        'React.js':'bg-blue-100 text-blue-800',
+        'Symfony (PHP)':'bg-red-100 text-red-800',
+        'Twig': 'bg-orange-100 text-orange-800',
+      };
+
+      showButtons.forEach(btn=>{
+        btn.addEventListener('click', function(){
+          const project = this.closest('article')?.querySelector('h3')?.textContent || 'Stack';
+          const langs = (this.getAttribute('data-languages')||'').split(',').map(s=>s.trim()).filter(Boolean);
+
+          modalTitle.textContent = `Stack — ${project}`;
+          languagesList.innerHTML = '';
+          langs.forEach(l=>{
+            const span = document.createElement('span');
+            span.className = `inline-block px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2 ${colors[l]||'bg-gray-100 text-gray-800'}`;
+            span.textContent = l;
+            languagesList.appendChild(span);
+          });
+
+          modal.classList.remove('hidden');
+          setTimeout(()=> modalContent.classList.add('active'), 10);
+        });
+      });
+
+      closeModal.addEventListener('click', hideModal);
+      modal.addEventListener('click', (e)=>{ if(e.target===modal) hideModal(); });
+      function hideModal(){
+        modalContent.classList.remove('active');
+        setTimeout(()=> modal.classList.add('hidden'), 180);
+      }
+    })();
+
+    // ===== Modal Galerie (images projets) =====
+    (function(){
+      const modal = document.getElementById('galleryModal');
+      const img = document.getElementById('galleryImage');
+      const counter = document.getElementById('galleryCounter');
+      const closeBtn = document.getElementById('closeGallery');
+      const prevBtn = document.getElementById('prevImage');
+      const nextBtn = document.getElementById('nextImage');
+
+      let images = [];
+      let index = 0;
+
+      // Ouvrir depuis les boutons "Voir le projet"
+      document.querySelectorAll('.show-project').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          images = (btn.getAttribute('data-images')||'')
+                    .split(',')
+                    .map(s=>s.trim())
+                    .filter(Boolean);
+          if(!images.length) return;
+          index = 0;
+          setImage(index);
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden'; // lock scroll
+        });
+      });
+
+      function setImage(i){
+        index = (i + images.length) % images.length;
+        img.src = images[index];
+        img.alt = `Image ${index+1} du projet`;
+        counter.textContent = `${index+1} / ${images.length}`;
+      }
+
+      // Navigation
+      prevBtn.addEventListener('click', ()=> setImage(index-1));
+      nextBtn.addEventListener('click', ()=> setImage(index+1));
+
+      // Fermer
+      function close(){
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        img.src = '';
+      }
+      closeBtn.addEventListener('click', close);
+
+      // Fermer en cliquant l'overlay
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) close(); });
+
+      // Clavier
+      document.addEventListener('keydown', (e)=>{
+        if(modal.classList.contains('hidden')) return;
+        if(e.key === 'ArrowLeft')  setImage(index-1);
+        if(e.key === 'ArrowRight') setImage(index+1);
+        if(e.key === 'Escape')     close();
+      });
+
+      // Swipe mobile
+      let startX = null;
+      img.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; });
+      img.addEventListener('touchend', (e)=>{
+        if(startX === null) return;
+        const dist = e.changedTouches[0].clientX - startX;
+        if(Math.abs(dist) > 40){
+          if(dist > 0) setImage(index-1); else setImage(index+1);
+        }
+        startX = null;
+      });
+    })();
+
+    // Smooth active links (anchor already smooth via CSS)
+  </script>
+
+  <!-- Reusable mini-components (templated with JS via innerHTML) -->
+  <script>
+    // Simple templating for Skill & RoadItem
+    function SkillTemplate(label, value){
+      return `
+        <div>
+          <div class="flex items-center justify-between mb-1 text-sm">
+            <span>${label}</span><span class="text-gray-500">${value}%</span>
+          </div>
+          <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full rounded-full" style="width:${value}%; background-image: linear-gradient(90deg, var(--grad1), var(--grad2));"></div>
+          </div>
+        </div>`;
+    }
+    function RoadItemTemplate(title, text){
+      return `
+        <div class="flex">
+          <div class="mt-1 mr-3 w-2 h-2 rounded-full bg-indigo-500"></div>
+          <div>
+            <div class="font-semibold">${title}</div>
+            <div class="text-gray-600">${text}</div>
+          </div>
+        </div>`;
+    }
+
+    // Hydrate pseudo-components
+    document.querySelectorAll('Skill').forEach(node=>{
+      const label = node.getAttribute('label')||''; const value = node.getAttribute('value')||'0';
+      node.outerHTML = SkillTemplate(label, value);
+    });
+    document.querySelectorAll('RoadItem').forEach(node=>{
+      const title = node.getAttribute('title')||''; const text = node.getAttribute('text')||'';
+      node.outerHTML = RoadItemTemplate(title, text);
+    });
+  </script>
+</body>
+</html>
