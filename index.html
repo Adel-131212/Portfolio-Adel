@@ -661,5 +661,24 @@
       node.outerHTML = RoadItemTemplate(title, text);
     });
   </script>
+  <script>
+    (function(){
+      const tried = new WeakMap();
+      function fallback(src){
+        if(/\.(webp)(\?.*)?$/i.test(src)) return src.replace(/\.webp(\?.*)?$/i, '.jpg$1');
+        if(/\.(jpe?g)(\?.*)?$/i.test(src)) return src.replace(/\.jpe?g(\?.*)?$/i, '.png$1');
+        return null;
+      }
+      window.addEventListener('error', function(e){
+        const el = e.target;
+        if(!(el instanceof HTMLImageElement)) return;
+        const count = (tried.get(el) || 0);
+        if(count > 2) return;
+        const next = fallback(el.src);
+        if(next){ tried.set(el, count+1); el.src = next; }
+      }, true);
+    })();
+    </script>
+    
 </body>
 </html>
